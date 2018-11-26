@@ -32,6 +32,8 @@
 #define TAMANONOMBREMOVIL 40
 #define TAMANOCLAVESIMETRICA 32
 #define TAMANOMENSAJECIFRADO 128    //TODO
+#define DIGITOSNUMEROAUTENTICACION 4
+
 SoftwareSerial bluetooth(10, 11);
 File ficheroClaves;
 uint8_t claveSimetrica[TAMANOCLAVESIMETRICA];
@@ -49,8 +51,8 @@ int cuentaLineas() {
 }
 
 int fase1() {
-  //Devuelve el numero de autenticacion enviado al final de la fase 1 de conexion o -1 si se aborto la conexion
-  //Recibe por BT el nombre del movil que solicita la conexion y envia por BT el numero de autenticacion para la conexion en plano
+  //Devuelve el numero de autenticacion enviado al final de la fase 1 de conexion en plano o -1 si se aborto la conexion
+  //Recibe por BT el nombre del movil que solicita la conexion y envia por BT el numero de autenticacion para la conexion cifrado con su clave simetrica
   //si la conexion se permite o "NO" si la conexion se aborta
   Serial.println("Fase 1 de conexion");
   char nombreMovil[TAMANONOMBREMOVIL];
@@ -69,10 +71,12 @@ int fase1() {
 
       if (nombreEnFichero(nombreMovil) == true) {       //Arduino comprueba que el movil esta en el fichero de nombres
         claveSimetrica = getClaveSimetrica(nombreMovil);
-
-        Serial.println(nombreMovil + " SI se encuentra en fichero");
-        int numeroDeAutenticacion = (int)random(10000);   //Arduino envia numero de autenticacion de identidad de movil en plano
-        bluetooth.write(toString(numeroDeAutenticacion));
+        Serial.print(nombreMovil);
+        Serial.println(" SI se encuentra en fichero");
+        int numeroDeAutenticacion = (int)random(pow(10,DIGITOSNUMEROAUTENTICACION));   //Arduino envia numero de autenticacion de identidad de movil en plano
+        char *numeroDeAutenticacionCifrado = toString(numeroDeAutenticacion);
+        aes256_enc_single(claveSimetrica, numeroDeAutenticacionCifrado);
+        bluetooth.write(numeroDeAutenticacionCifrado);
 
         return numeroDeAutenticacion;
       } else {
@@ -156,7 +160,7 @@ void setup() {
 void loop() {
   int numeroDeAutenticacion = fase1();
   if (numeroDeAutenticacion != -1) {
-    boolean continuar = fase2(numeroDeAutenticacion);
+    boolean continuar = fase2((numeroDeAutenticacion+1)%((int)pow(10,DIGITOSNUMEROAUTENTICACION)));
     if (continuar == true) {
       boolean modoModificacion = fase3();
 
