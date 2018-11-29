@@ -43,10 +43,17 @@ uint8_t claveSimetrica[TAMANOCLAVESIMETRICA];
 boolean primeraConexion;
 
 //------------------------Funciones de proposito general-----------------------------
+char *nextLine() {
+  char linea[100];
+  while (ficheroClaves.peek() != "\n") {
+    strcat(linea,ficheroClaves.peek());
+  }
+  return linea;
+}
 int cuentaLineas() {
   //Cuenta el numero de lineas del fichero de claves local
   ficheroClaves.close();
-  ficheroClaves = SD.open("ficheroClaves.txt","r");
+  ficheroClaves = SD.open("ficheroClaves.txt", "r");
   int nLineas = 0;
   while (ficheroClaves.peek() != -1) {
     if (ficheroClaves.read() == '\n') {
@@ -54,24 +61,24 @@ int cuentaLineas() {
     }
   }
   ficheroClaves.close();
-  ficheroClaves = SD.open("ficheroClaves.txt","r");
+  ficheroClaves = SD.open("ficheroClaves.txt", "r");
   return nLineas;
 }
 
-char *toString(int n){
+char *toString(int n) {
   //Fuente: https://www.systutorials.com/131/convert-string-to-int-and-reverse/
   int numDigitos = 1;
   int temp = n;
-  while(temp != 0){
-    temp = n/10;
+  while (temp != 0) {
+    temp = n / 10;
     numDigitos++;
-    }
-    
+  }
+
   const char base_string[] = "base_string";
   char out_string[numDigitos];
   sprintf(out_string, "%s%d", base_string, n);
   return out_string;
-  }
+}
 //-----------------------Funciones relativas a la fase de la conexion----------------
 int fase1() {
   //Devuelve el numero de autenticacion enviado al final de la fase 1 de conexion en plano o -1 si se aborto la conexion
@@ -96,7 +103,7 @@ int fase1() {
         claveSimetrica = getClaveSimetrica(nombreMovil);
         Serial.print(nombreMovil);
         Serial.println(" SI se encuentra en fichero");
-        int numeroDeAutenticacion = (int)random(pow(10,DIGITOSNUMEROAUTENTICACION));   //Arduino envia numero de autenticacion de identidad de movil en plano
+        int numeroDeAutenticacion = (int)random(pow(10, DIGITOSNUMEROAUTENTICACION));  //Arduino envia numero de autenticacion de identidad de movil en plano
         char *numeroDeAutenticacionCifrado = toString(numeroDeAutenticacion);
         aes256_enc_single(claveSimetrica, numeroDeAutenticacionCifrado);
         bluetooth.write(numeroDeAutenticacionCifrado);
@@ -173,7 +180,7 @@ void setup() {
   SD.begin();
   Serial.begin(9600);
   bluetooth.begin(38400);
-  ficheroClaves = SD.open("ficheroClaves.txt","r");
+  ficheroClaves = SD.open("ficheroClaves.txt", "r");
   primeraConexion = false;
   if (ficheroClaves.size() == 0 || cuentaLineas() == 1) {
     primeraConexion = true;
@@ -183,7 +190,7 @@ void setup() {
 void loop() {
   int numeroDeAutenticacion = fase1();
   if (numeroDeAutenticacion != -1) {
-    boolean continuar = fase2((numeroDeAutenticacion+1)%((int)pow(10,DIGITOSNUMEROAUTENTICACION)));
+    boolean continuar = fase2((numeroDeAutenticacion + 1) % ((int)pow(10, DIGITOSNUMEROAUTENTICACION)));
     if (continuar == true) {
       boolean modoModificacion = fase3();
 
