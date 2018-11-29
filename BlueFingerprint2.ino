@@ -188,11 +188,13 @@ void setup() {
 }
 
 void loop() {
+  //Establecimiento de conexion en fase 1 y fase 2
   int numeroDeAutenticacion = fase1();
-  if (numeroDeAutenticacion != -1) {
+  if (numeroDeAutenticacion != -1) {  //Enviado "OK" en fase 1 de conexion
     boolean continuar = fase2((numeroDeAutenticacion + 1) % ((int)pow(10, DIGITOSNUMEROAUTENTICACION)));
-    if (continuar == true) {
-      boolean modoModificacion = fase3();
+    if (continuar == true) {  //Enviado "OK" en fase 2 de conexion. Conexion establecida.
+      //Seleccion de modo de trabajo en fase 3
+      boolean modoModificacion = fase3(); 
 
 
       if (modoModificacion == true) {   //Arduino trabaja en modo MODIFY DATABASE
@@ -200,14 +202,14 @@ void loop() {
       } else {      //Arduino trabaja en modo OPEN
 
       }
-    } else {
+    } else {    //Enviado "NO" en fase 2 de conexion
       Serial.println("");
       Serial.println("----------------------REINICIO DE CONEXION-------------------");
       Serial.println("");
     }
 
   }
-  else {
+  else {    //Enviado "NO" en fase 1 de conexion
     Serial.println("");
     Serial.println("----------------------REINICIO DE CONEXION-------------------");
     Serial.println("");
