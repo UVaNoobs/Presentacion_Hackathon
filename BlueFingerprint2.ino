@@ -74,8 +74,8 @@ char *toString(int n) {
     numDigitos++;
   }
 
-  const char base_string[] = "base_string";
-  char out_string[numDigitos];
+  const char base_string[] = "";
+  char out_string[numDigitos+1];
   sprintf(out_string, "%s%d", base_string, n);
   return out_string;
 }
