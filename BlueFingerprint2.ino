@@ -53,6 +53,8 @@ int cuentaLineas() {
       nLineas ++;
     }
   }
+  ficheroClaves.close();
+  ficheroClaves = SD.open("ficheroClaves.txt","r");
   return nLineas;
 }
 
@@ -116,7 +118,7 @@ boolean fase2(int numeroDeAutenticacion) {
   //Recibe por BT el numero de autenticacion cifrado con la clave simetrica del movil que solicita la conexion
   //Envia por BT "OK" o "NO" en funcion de si la conexion se aborto o no
   //Devuelve true si la conexion continua, false si se aborta
-  char numeroDeAutenticacionPlano[] = toString(numeroDeAutenticacion);
+  char *numeroDeAutenticacionPlano = toString(numeroDeAutenticacion);
   char numeroDeAutenticacionCifrado[TAMANOMENSAJECIFRADO];
   int contador = 0;
 
