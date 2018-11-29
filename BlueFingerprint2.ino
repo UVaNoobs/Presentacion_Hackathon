@@ -1,3 +1,4 @@
+//Librerias de cifrado simetrico AES
 #include <aes_keyschedule.h>
 #include <bcal-cbc.h>
 #include <aes_sbox.h>
@@ -24,22 +25,26 @@
 #include <bcal_aes192.h>
 #include <aes256_enc.h>
 
+//Librerias de comunicacion y gestion de memoria
 #include <SoftwareSerial.h>
 #include <SD.h>
 #include <string.h>
 
-
+//Constantes del programa
 #define TAMANONOMBREMOVIL 40
 #define TAMANOCLAVESIMETRICA 32
 #define TAMANOMENSAJECIFRADO 128    //TODO
 #define DIGITOSNUMEROAUTENTICACION 4
 
+//Variables globales
 SoftwareSerial bluetooth(10, 11);
 File ficheroClaves;
 uint8_t claveSimetrica[TAMANOCLAVESIMETRICA];
 boolean primeraConexion;
 
+//------------------------Funciones de proposito general-----------------------------
 int cuentaLineas() {
+  //Cuenta el numero de lineas del fichero de claves local
   ficheroClaves = SD.open("ficheroClaves.txt");
   int nLineas = 0;
   while (ficheroClaves.peek() != -1) {
@@ -49,7 +54,7 @@ int cuentaLineas() {
   }
   return nLineas;
 }
-
+//-----------------------Funciones relativas a la fase de la conexion----------------
 int fase1() {
   //Devuelve el numero de autenticacion enviado al final de la fase 1 de conexion en plano o -1 si se aborto la conexion
   //Recibe por BT el nombre del movil que solicita la conexion y envia por BT el numero de autenticacion para la conexion cifrado con su clave simetrica
