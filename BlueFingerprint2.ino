@@ -45,7 +45,8 @@ boolean primeraConexion;
 //------------------------Funciones de proposito general-----------------------------
 int cuentaLineas() {
   //Cuenta el numero de lineas del fichero de claves local
-  ficheroClaves = SD.open("ficheroClaves.txt");
+  ficheroClaves.close();
+  ficheroClaves = SD.open("ficheroClaves.txt","r");
   int nLineas = 0;
   while (ficheroClaves.peek() != -1) {
     if (ficheroClaves.read() == '\n') {
@@ -56,6 +57,7 @@ int cuentaLineas() {
 }
 
 char *toString(int n){
+  //Fuente: https://www.systutorials.com/131/convert-string-to-int-and-reverse/
   int numDigitos = 1;
   int temp = n;
   while(temp != 0){
@@ -169,7 +171,7 @@ void setup() {
   SD.begin();
   Serial.begin(9600);
   bluetooth.begin(38400);
-  ficheroClaves = SD.open("ficheroClaves.txt");
+  ficheroClaves = SD.open("ficheroClaves.txt","r");
   primeraConexion = false;
   if (ficheroClaves.size() == 0 || cuentaLineas() == 1) {
     primeraConexion = true;
