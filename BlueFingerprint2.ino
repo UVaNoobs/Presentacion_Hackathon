@@ -54,6 +54,20 @@ int cuentaLineas() {
   }
   return nLineas;
 }
+
+char *toString(int n){
+  int numDigitos = 1;
+  int temp = n;
+  while(temp != 0){
+    temp = n/10;
+    numDigitos++;
+    }
+    
+  const char base_string[] = "base_string";
+  char out_string[numDigitos];
+  sprintf(out_string, "%s%d", base_string, n);
+  return out_string;
+  }
 //-----------------------Funciones relativas a la fase de la conexion----------------
 int fase1() {
   //Devuelve el numero de autenticacion enviado al final de la fase 1 de conexion en plano o -1 si se aborto la conexion
